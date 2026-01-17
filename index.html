@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="https://ecs7.tokopedia.net/assets-tokopedia-lite/prod/icon144.png" sizes="144x144" type="image/png">
+  <meta name="theme-color" content="#008000"> 
+  <title></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: url('img/ban.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      color: #000;
+    }
+
+    nav {
+      width: 100%;
+      position: fixed;
+      top: 0;
+      background-color: rgba(255, 255, 255, 0.3);
+      z-index: 1000;
+    }
+
+    nav img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .content {
+      padding-top: 80px; /* supaya tidak tertutup nav */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .image-container img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .box-wrapper {
+      background-color: rgba(255, 255, 255, 0.4);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .btn-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      text-decoration: none;
+      background: #008000;
+      color: #fff;
+      font-weight: bold;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.25);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0px 6px 0px -1px #555;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0px 3px 0px -1px #555;
+    }
+
+    .icon-btn {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    footer {
+      background-color: #888;
+      color: #000;
+      font-weight: bold;
+      padding: 15px;
+      font-size: 12px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    img.fullwidth {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* 🔹 RESPONSIVE: HP & TABLET */
+    @media (max-width: 600px) {
+      nav img {
+        height: auto;
+      }
+
+      .btn {
+        font-size: 14px;
+        padding: 12px;
+      }
+
+      .box-wrapper {
+        width: 95%;
+        padding: 15px;
+      }
+
+      .icon-btn {
+        width: 20px;
+        height: 20px;
+      }
+
+      .image-container img {
+        max-width: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <img src="img/pucok.png" alt="Navbar">
+  </nav>
+
+  <div class="content">
+    <div class="image-container">
+      <img src="img/ikak.jpg" alt="Gambar Utama">
+    </div>
+
+    <div class="box-wrapper">
+      <div class="btn-container">
+        <a href="dta.html" class="btn">
+          <img src="img/uu.png" alt="Ikon" class="icon-btn">
+          Terima Ke Rekening Bank
+        </a>
+
+        <a href="verif-no.html" class="btn">
+          <img src="img/uu.png" alt="Ikon" class="icon-btn">
+          Terima Ke Saldo Tokopedia
+        </a>
+
+        
+      </div>
+    </div>
+
+    <img src="img/as.jpg" alt="Gambar Bawah" class="fullwidth">
+  </div>
+
+</body>
+</html>
